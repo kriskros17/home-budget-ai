@@ -1,6 +1,6 @@
 import pytest
 import db
-
+import sqlite3
 
 @pytest.fixture(autouse=True)
 def fresh_db(tmp_path, monkeypatch):
@@ -92,3 +92,24 @@ def test_set_budget_keeps_id():
     db.set_budget("Food", 300)
     db.set_budget("Food", 400)
     assert db.get_budgets()[0][0] == 1
+
+def test_subscription_negative_amount_is_rejected():
+    with pytest.raises(sqlite3.IntegrityError):
+        db.add_subscription("Hulu", -10, "yearly", "2024-06-01", 1)
+
+def test_subscription_invalid_cycle_is_rejected():
+    with pytest.raises(sqlite3.IntegrityError):
+        db.add_subscription("Hulu", 10, "weekly", "2024-06-01", 1)
+
+def test_subscription_zero_amount_is_rejected():
+    with pytest.raises(sqlite3.IntegrityError):
+        db.add_subscription("Hulu", 0, "monthly", "2024-06-01", 1)
+
+def test_subscription_invalid_active_value_is_rejected():
+    with pytest.raises(sqlite3.IntegrityError):
+        db.add_subscription("Hulu", 10, "monthly", "2024-06-01", 2)
+
+def test_add_budget_duplicate_category_is_rejected():
+    db.add_budget("Food", 300)
+    with pytest.raises(sqlite3.IntegrityError):
+        db.add_budget("Food", 400)
