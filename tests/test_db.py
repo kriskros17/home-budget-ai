@@ -123,3 +123,17 @@ def test_monthly_subscription_cost():
 
 def test_monthly_subscription_cost_without_subscriptions():
     assert db.get_monthly_subscription_cost() == 0
+
+def test_get_budget_status():
+    db.set_budget("Food", 300)
+    db.set_budget("Transport", 150)
+    db.add_expense("2024-06-01", "Groceries", 100, "Food")
+    db.add_expense("2024-06-02", "Tram ticket", 50, "Transport")
+    status = db.get_budget_status('2024-06')
+    assert sorted(status) == [("Food", 300, -100, 200), ("Transport", 150, -50, 100)]
+
+def test_budget_status_ignores_income():
+    db.set_budget("Food", 300)
+    db.add_expense("2024-06-01", "Groceries", 100, "Food")
+    db.add_income("2024-06-15", "Refund", 40, "Food")
+    assert db.get_budget_status("2024-06") == [("Food", 300, -100, 200)]

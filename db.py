@@ -235,7 +235,20 @@ def get_monthly_subscription_cost():
     conn.close()
     return monthly_cost
 
+def get_budget_status(month):
+    conn = get_connection()
+    cursor = conn.cursor()
 
+    cursor.execute("""
+    SELECT b.category, b.monthly_limit, IFNULL(SUM(t.amount), 0) as spent, (b.monthly_limit + IFNULL(SUM(t.amount), 0)) as remaining
+    FROM budgets b
+    LEFT JOIN transactions t ON b.category = t.category AND strftime('%Y-%m', t.date) = ? AND t.amount < 0
+    GROUP BY b.category, b.monthly_limit
+    """, (month,))
+    
+    budget_status = cursor.fetchall()
+    conn.close()
+    return budget_status
 
 if __name__ == "__main__":
     init_db()
