@@ -226,6 +226,15 @@ def set_budget(category, monthly_limit):
     finally:
         conn.close()
 
+def get_monthly_subscription_cost():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT SUM(CASE WHEN cycle = 'monthly' THEN amount WHEN cycle = 'yearly' THEN amount / 12 ELSE 0 END) FROM subscriptions WHERE active = 1")
+    monthly_cost = cursor.fetchone()[0] or 0
+    conn.close()
+    return monthly_cost
+
 if __name__ == "__main__":
     init_db()
 
