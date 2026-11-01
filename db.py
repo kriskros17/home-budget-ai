@@ -235,6 +235,8 @@ def get_monthly_subscription_cost():
     conn.close()
     return monthly_cost
 
+
+
 if __name__ == "__main__":
     init_db()
 
