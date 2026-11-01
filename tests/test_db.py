@@ -113,3 +113,13 @@ def test_add_budget_duplicate_category_is_rejected():
     db.add_budget("Food", 300)
     with pytest.raises(sqlite3.IntegrityError):
         db.add_budget("Food", 400)
+
+def test_monthly_subscription_cost():
+    db.add_subscription("Netflix", 15, "monthly", "2024-06-01", 1)
+    db.add_subscription("Cloud", 120, "yearly", "2024-06-01", 1)
+    db.add_subscription("Old gym", 50, "monthly", "2024-06-01", 1)
+    db.cancel_subscription(3)
+    assert db.get_monthly_subscription_cost() == 25
+
+def test_monthly_subscription_cost_without_subscriptions():
+    assert db.get_monthly_subscription_cost() == 0
