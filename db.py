@@ -232,7 +232,7 @@ if __name__ == "__main__":
 
     add_income("2024-06-01", "Salary", 5000, "Income")
     add_expense("2024-06-02", "Groceries", 100, "Food")
-    add_expense("2026-06-03", "Tram ticket", 2.5, "Transport")
+    add_expense("2024-06-03", "Tram ticket", 2.5, "Transport")
     add_expense("2024-06-04", "Coffee", -12, "Food")
 
 

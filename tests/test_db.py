@@ -50,7 +50,7 @@ def test_cancel_existing_subscription():
 
 
 def test_cancel_nonexistent_subscription():
-    result =db.cancel_subscription(999)
+    result = db.cancel_subscription(999)
     assert result is False
 
 def test_delete_subscription():
@@ -73,3 +73,22 @@ def test_delete_goal():
     db.add_goal("New Car", 5000, 1000, 1)
     db.delete_goal(1)
     assert db.get_goals() == []
+
+
+def test_set_budget_adds_new_limit():
+    db.set_budget("Food", 300)
+    assert db.get_budgets()[0][1] == "Food"
+    assert db.get_budgets()[0][2] == 300
+
+
+def test_set_budget_updates_existing_limit():
+    db.set_budget("Food", 300)
+    db.set_budget("Food", 400)
+    db.set_budget("Food", 500)
+    assert len(db.get_budgets()) == 1
+    assert db.get_budgets()[0][2] == 500
+
+def test_set_budget_keeps_id():
+    db.set_budget("Food", 300)
+    db.set_budget("Food", 400)
+    assert db.get_budgets()[0][0] == 1
